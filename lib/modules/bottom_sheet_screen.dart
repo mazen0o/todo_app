@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/models/task_model/task_model.dart';
+import 'package:todo_app/utils/my_data_base.dart';
 
 class BottomSheetScreen extends StatefulWidget {
   @override
@@ -8,6 +10,8 @@ class BottomSheetScreen extends StatefulWidget {
 class _BottomSheetScreenState extends State<BottomSheetScreen> {
   var selectDate = DateTime.now();
   var formkey = GlobalKey<FormState>();
+  String title = "";
+  String desc = "";
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +34,9 @@ class _BottomSheetScreenState extends State<BottomSheetScreen> {
                       decoration: InputDecoration(
                           labelText: "Tittle",
                           labelStyle: TextStyle(fontSize: 30)),
+                      onChanged: (text) {
+                        title = text;
+                      },
                       validator: (text) {
                         if (text!.isEmpty || text == null) {
                           return "please enter title";
@@ -44,6 +51,9 @@ class _BottomSheetScreenState extends State<BottomSheetScreen> {
                       decoration: InputDecoration(
                           labelText: "Description",
                           labelStyle: TextStyle(fontSize: 30)),
+                      onChanged: (text) {
+                        desc = text;
+                      },
                       validator: (text) {
                         if (text!.isEmpty || text == null) {
                           return "please enter describtion";
@@ -81,7 +91,13 @@ class _BottomSheetScreenState extends State<BottomSheetScreen> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  if (formkey.currentState!.validate()) {}
+                  if (formkey.currentState!.validate()) {
+                    TaskModel task = TaskModel(
+                        title: title,
+                        dateTime: selectDate.microsecondsSinceEpoch,
+                        describtion: desc);
+                    MyDataBase.addTaskDataBase(task);
+                  }
                 },
                 child: Text(
                   "Add Task",
