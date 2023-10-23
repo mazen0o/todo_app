@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/models/task_model/task_model.dart';
 import 'package:todo_app/utils/my_data_base.dart';
 
+import '../shared/component/components.dart';
+
 class BottomSheetScreen extends StatefulWidget {
   @override
   State<BottomSheetScreen> createState() => _BottomSheetScreenState();
@@ -96,7 +98,17 @@ class _BottomSheetScreenState extends State<BottomSheetScreen> {
                         title: title,
                         dateTime: selectDate.microsecondsSinceEpoch,
                         describtion: desc);
-                    MyDataBase.addTaskDataBase(task);
+                    showLoading(context, "Loading...");
+                    MyDataBase.addTaskDataBase(task)
+                        .then((value) {
+                          hideLoading(context);
+                          showMsg(context, "Added Successfully", "Ok", () {
+                            Navigator.pop(context);
+                          });
+                          //Navigator.pop(context);
+                        })
+                        .onError((error, stackTrace) {})
+                        .catchError(() {});
                   }
                 },
                 child: Text(

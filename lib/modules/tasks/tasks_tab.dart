@@ -1,7 +1,10 @@
 import 'package:calendar_timeline/calendar_timeline.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/modules/tasks/task_item.dart';
+import 'package:todo_app/utils/my_data_base.dart';
 
+import '../../models/task_model/task_model.dart';
 import '../../shared/styles/my_theme.dart';
 
 class TasksTab extends StatelessWidget {
@@ -25,9 +28,26 @@ class TasksTab extends StatelessWidget {
             locale: 'en_ISO',
           ),
           Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) => TaskItem(),
-              itemCount: 20,
+            child: StreamBuilder<QuerySnapshot<TaskModel>>(
+              stream: MyDataBase.getAllTasksStream(),
+              builder: (
+                context,
+                snapshot,
+              ) {
+                if (snapshot.hasError) {
+                  return Text("something went error");
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                var data = snapshot.data?.docs.map((e) => e.data()).toList();
+                return ListView.builder(
+                  itemBuilder: (context, index) {
+                    return TaskItem(data[index]);
+                  },
+                  itemCount: data!.length,
+                );
+              },
             ),
           ),
         ],
@@ -35,3 +55,7 @@ class TasksTab extends StatelessWidget {
     );
   }
 }
+// ListView.builder(
+// itemBuilder: (context, index) => TaskItem(),
+// itemCount: 20,
+// ),

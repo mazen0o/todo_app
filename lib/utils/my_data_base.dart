@@ -18,4 +18,17 @@ class MyDataBase {
     task.id = document.id;
     return document.set(task);
   }
+
+  static Future<QuerySnapshot<TaskModel>> getAllTasks() async {
+    return await getTaskCollecetion().get();
+  }
+
+  static Stream<QuerySnapshot<TaskModel>> getAllTasksStream() {
+    return getTaskCollecetion().snapshots();
+  }
+
+  static Future<void> deleteTask(TaskModel task) async {
+    var taskDocs = getTaskCollecetion().doc(task.id);
+    taskDocs.delete();
+  }
 }
